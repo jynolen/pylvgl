@@ -8,10 +8,10 @@
             "module": "lvgl.converter",
             "args": [
                 "--color_format", 
-                "true_color_alpha", 
-                "Assets_Tools/tests/samples/random_png_1.png", 
+                "true_color_chroma", 
+                "tests/samples/sample.png", 
                 "--output_format", 
-                "bin_332"
+                "bin_565"
             ]
         },
         {
@@ -21,10 +21,10 @@
             "module": "lvgl.deconverter",
             "args": [
                 "--output_format", 
-                "bin_332", 
+                "bin_565", 
                 "--output_file", 
-                "test.png", 
-                "random_png_1.bin"
+                "sample.png", 
+                "sample.bin"
             ]
         }
     ]
