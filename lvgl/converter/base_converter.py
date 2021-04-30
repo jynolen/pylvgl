@@ -129,6 +129,8 @@ class Converter(ABC):
     def export_to_bin(self):
         header = self.lv_cf + (self.image.width << 10) + (self.image.height << 21)
         header_bin = struct.pack("<L", header)
+        if self.output_mode.disable_header:
+            return  bytearray(self.bin_out)
         return bytearray(header_bin) + bytearray(self.bin_out)
 
     def export(self, c_array=True):

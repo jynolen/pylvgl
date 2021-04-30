@@ -7,10 +7,10 @@
             "request": "launch",
             "module": "lvgl.converter",
             "args": [
-                "--color_format", 
-                "true_color_chroma", 
-                "tests/samples/sample.png", 
-                "--output_format", 
+                "--color_format",
+                "true_color_chroma",
+                "tests/samples/sample.png",
+                "--output_format",
                 "bin_565"
             ]
         },
@@ -20,12 +20,19 @@
             "request": "launch",
             "module": "lvgl.deconverter",
             "args": [
-                "--output_format", 
-                "bin_565", 
-                "--output_file", 
-                "sample.png", 
+                "--output_format",
+                "bin_565",
+                "--output_file",
+                "sample.png",
                 "sample.bin"
             ]
+        },
+        {
+            "name": "Python: Current File",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "integratedTerminal"
         }
     ]
 }

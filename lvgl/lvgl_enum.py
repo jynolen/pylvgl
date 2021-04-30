@@ -21,6 +21,7 @@ class RGB332:
     value = "bin_332"
     bytes_per_pixel = 1
     pack_value = "B"
+    disable_header = False
 
     @classmethod
     def convert_rgba(cls, r, g, b, a, include_alpha=False):
@@ -63,7 +64,7 @@ class RGB565:
     value = "bin_565"
     bytes_per_pixel = 2
     pack_value = "H"
-    
+    disable_header = False    
 
     @classmethod
     def convert_rgba(cls, r, g, b, a, include_alpha=False):
@@ -106,10 +107,58 @@ class RGB565:
     def row_size(cls, width):
         return 2*width
 
+class RGB565_MKS:
+    value = "bin_565_mks"
+    bytes_per_pixel = 2
+    pack_value = "H"
+    disable_header = True
+
+    @classmethod
+    def convert_rgba(cls, r, g, b, a, include_alpha=False):
+        # Keep most signicant bits of each colors
+        r_mask = 0b11111000 # 5 bits for red
+        g_mask = 0b11111100 # 6 bits for green
+        b_mask = 0b11111000 # 5 bits for blue
+
+        
+        r_ =   ( r  & r_mask )        << 8 
+        g_ = ( ( g  & g_mask ) >> 2 ) << 5
+        b_ = ( ( b  & b_mask ) >> 3 )
+
+        long = r_ | g_ | b_
+        return [ long & 0xff, (long >> 8) ] + ([a] if include_alpha else [])
+
+    @classmethod
+    def dithering(cls, pixel):
+        r, g, b = classify_pixel(pixel, (5,6,5))
+        return {
+            "r" : 0xf8 if r > 0xf8 else r,
+            "g" : 0xfc if g > 0xfc else g,
+            "b" : 0xf8 if b > 0xf8 else b
+        }
+
+    @classmethod
+    def convert_bin(cls, pixel):
+        pixel  = struct.unpack(f'>H', pixel)[0]
+        r_mask = 0b1111100000000000
+        g_mask = 0b0000011111100000
+        b_mask = 0b0000000000011111
+
+        r = ( ( pixel & r_mask ) >> 8 ) & 0xff
+        g = ( ( pixel & g_mask ) >> 3 ) & 0xff
+        b = ( ( pixel & b_mask ) << 3 ) & 0xff
+
+        return r,g,b,-1
+
+    @classmethod
+    def row_size(cls, width):
+        return 2*width
+
 class RGB565_SWAP:
     value = "bin_565_swap"
     bytes_per_pixel = 2
     pack_value = "H"
+    disable_header = False
 
     @classmethod
     def convert_rgba(cls, r, g, b, a, include_alpha=False):
@@ -155,6 +204,7 @@ class RGB888:
     value = "bin_888"
     bytes_per_pixel = 4
     pack_value = "L"
+    disable_header = False
 
     @classmethod
     def convert_rgba(cls, r, g, b, a, include_alpha=False):
@@ -191,6 +241,7 @@ class RGB888:
 class OuputFormat(SmartEnum):
     RGB_332         = RGB332
     RGB_565         = RGB565
+    RGB_565_MKS     = RGB565_MKS
     RGB_565_SWAP    = RGB565_SWAP
     RGB_888         = RGB888
 
